@@ -79,8 +79,10 @@ const cursos = [
   { nombre: "Elementary business english", ciclo: 10, prerequisitos: ["Inglés IV"] },
   { nombre: "Gestión del servicio TI", ciclo: 10, prerequisitos: ["Análisis y diseño de sistemas de información"] }
 ];
-
 const container = document.getElementById("malla");
+const aprobados = new Set();
+const cursoElements = {};
+
 const maxCiclo = Math.max(...cursos.map(c => c.ciclo));
 
 for (let ciclo = 1; ciclo <= maxCiclo; ciclo++) {
@@ -90,20 +92,49 @@ for (let ciclo = 1; ciclo <= maxCiclo; ciclo++) {
 
   const bloque = document.createElement("div");
   bloque.className = "contenedor-cursos";
+  bloque.style.display = "flex";
+  bloque.style.flexDirection = "column";
+  bloque.style.gap = "10px";
 
   cursos.filter(c => c.ciclo === ciclo).forEach(curso => {
     const div = document.createElement("div");
     div.className = "curso";
-    div.innerHTML = `
-      <h3>${curso.nombre}</h3>
-      <div class="prereq">
-        ${curso.prerequisitos.length > 0 ? `Prerrequisitos: ${curso.prerequisitos.join(", ")}` : "Sin prerrequisitos"}
-      </div>
-      <button onclick="this.parentElement.classList.toggle('aprobado')">Aprobar</button>
-    `;
+    div.style.display = "flex";
+    div.style.flexDirection = "column";
+    div.style.alignItems = "flex-start";
+    div.style.gap = "5px";
+
+    const titulo = document.createElement("h3");
+    titulo.textContent = curso.nombre;
+    div.appendChild(titulo);
+
+    const boton = document.createElement("button");
+    boton.textContent = "Aprobar";
+    boton.disabled = curso.prerequisitos.length > 0;
+    boton.onclick = () => {
+      aprobados.add(curso.nombre);
+      div.classList.add("aprobado");
+      boton.disabled = true;
+      revisarDesbloqueos();
+    };
+
+    div.appendChild(boton);
     bloque.appendChild(div);
+    cursoElements[curso.nombre] = { div, boton, curso };
   });
 
   divCiclo.appendChild(bloque);
   container.appendChild(divCiclo);
 }
+
+function revisarDesbloqueos() {
+  Object.values(cursoElements).forEach(({ curso, boton, div }) => {
+    if (!aprobados.has(curso.nombre) && curso.prerequisitos.every(p => aprobados.has(p))) {
+      boton.disabled = false;
+      div.classList.add("desbloqueado");
+    }
+  });
+}
+
+// Desbloquea los que no tienen prerrequisitos desde el inicio
+revisarDesbloqueos();
