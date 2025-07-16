@@ -1,72 +1,58 @@
 body {
-  background-color: #000;
-  font-family: Arial, sans-serif;
-  color: #bdfcc9;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #0d0d0d;
+  color: #ccffcc;
   margin: 0;
   padding: 20px;
 }
 
 h1 {
+  color: #66ff66;
   text-align: center;
-  color: #7fffaa;
-  text-shadow: 0 0 10px #0f0;
-  margin-bottom: 40px;
 }
 
-h2 {
-  color: #7fffaa;
-  text-shadow: 0 0 8px #0f0;
+#resetButton {
+  display: block;
+  margin: 0 auto 20px auto;
+  padding: 10px 20px;
+  background-color: #004d00;
+  color: #ccffcc;
+  border: none;
+  cursor: pointer;
+  border-radius: 8px;
 }
 
 .ciclo {
-  margin-bottom: 30px;
+  border: 2px solid #33cc33;
+  border-radius: 10px;
+  padding: 10px;
+  margin: 20px 0;
+  background-color: #001a00;
 }
 
-.contenedor-cursos {
+.ciclo h2 {
+  margin-top: 0;
+  color: #66ff66;
+}
+
+.cursos {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  background-color: #111;
-  padding: 10px;
-  border-radius: 10px;
 }
 
 .curso {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
   padding: 10px;
-  background-color: #1a1a1a;
-  border: 1px solid #0f0;
+  background-color: #003300;
+  color: #ccffcc;
+  border: 1px solid #66ff66;
   border-radius: 8px;
-  width: 200px;
   cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.curso h3 {
-  font-size: 14px;
-  text-align: center;
-  color: #bdfcc9;
-  margin: 0;
-  margin-bottom: 5px;
+  transition: 0.3s ease;
+  flex: 1 0 200px;
 }
 
 .curso.aprobado {
-  background-color: #004d00;
-  border-color: #00ff00;
-  box-shadow: 0 0 10px #00ff00;
-}
-
-.curso.desbloqueado {
-  background-color: #1a331a;
-  border-color: #66ff66;
-}
-
-.curso.bloqueado {
-  background-color: #1a1a1a;
-  border-color: #333;
-  opacity: 0.5;
-  cursor: not-allowed;
+  background-color: #006600;
+  text-decoration: line-through;
 }
