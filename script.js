@@ -124,9 +124,15 @@ for (let ciclo = 1; ciclo <= maxCiclo; ciclo++) {
     boton.textContent = "Aprobar";
     boton.disabled = curso.prerequisitos.length > 0;
     boton.onclick = () => {
-      aprobados.add(curso.nombre);
-      div.classList.add("aprobado");
-      boton.disabled = true;
+      if (aprobados.has(curso.nombre)) {
+        aprobados.delete(curso.nombre);
+        div.classList.remove("aprobado");
+        boton.textContent = "Aprobar";
+      } else {
+        aprobados.add(curso.nombre);
+        div.classList.add("aprobado");
+        boton.textContent = "Deseleccionar";
+      }
       revisarDesbloqueos();
     };
 
@@ -141,9 +147,19 @@ for (let ciclo = 1; ciclo <= maxCiclo; ciclo++) {
 
 function revisarDesbloqueos() {
   Object.values(cursoElements).forEach(({ curso, boton, div }) => {
-    if (!aprobados.has(curso.nombre) && curso.prerequisitos.every(p => aprobados.has(p))) {
+    if (aprobados.has(curso.nombre)) {
+      boton.textContent = "Deseleccionar";
       boton.disabled = false;
-      div.classList.add("desbloqueado");
+    } else {
+      const desbloqueado = curso.prerequisitos.every(p => aprobados.has(p));
+      boton.disabled = !desbloqueado;
+      boton.textContent = "Aprobar";
+      div.classList.remove("aprobado");
+      if (desbloqueado) {
+        div.classList.add("desbloqueado");
+      } else {
+        div.classList.remove("desbloqueado");
+      }
     }
   });
 }
