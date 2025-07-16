@@ -79,7 +79,7 @@ const cursos = [
   { nombre: "Liderazgo y gestión de equipos", ciclo: 10, prerequisitos: ["Administración y organización de empresas"] },
   { nombre: "Elementary business english", ciclo: 10, prerequisitos: ["Inglés IV"] },
   { nombre: "Gestión del servicio TI", ciclo: 10, prerequisitos: ["Análisis y diseño de sistemas de información"] },
-];
+]
 
 document.addEventListener("DOMContentLoaded", () => {
   const malla = document.getElementById("malla");
@@ -100,19 +100,22 @@ document.addEventListener("DOMContentLoaded", () => {
       div.classList.add("curso");
       div.textContent = curso.nombre;
 
-      if (estado[curso.nombre]) div.classList.add("aprobado");
+      if (estado[curso.nombre]) {
+        div.classList.add("aprobado");
+      }
 
       const actualizarEstado = () => {
         if (div.classList.contains("aprobado")) {
           delete estado[curso.nombre];
         } else {
-          const requisitos = curso.prerequisitos.every(p => estado[p]);
-          if (!requisitos) {
+          const requisitosCumplidos = curso.prerequisitos.every(p => estado[p]);
+          if (!requisitosCumplidos) {
             alert("Primero debes aprobar los prerrequisitos.");
             return;
           }
           estado[curso.nombre] = true;
         }
+
         localStorage.setItem("cursosAprobados", JSON.stringify(estado));
         div.classList.toggle("aprobado");
       };
@@ -130,4 +133,3 @@ document.addEventListener("DOMContentLoaded", () => {
     location.reload();
   });
 });
-
