@@ -90,7 +90,6 @@ const cursos = [
   { nombre: "Elementary business english", ciclo: 10, prerequisitos: ["Inglés IV"] },
   { nombre: "Gestión del servicio TI", ciclo: 10, prerequisitos: ["Análisis y diseño de sistemas de información"] }
 ];
-
 const container = document.getElementById("malla");
 const aprobados = new Set();
 const cursoElements = {};
@@ -100,66 +99,77 @@ const maxCiclo = Math.max(...cursos.map(c => c.ciclo));
 for (let ciclo = 1; ciclo <= maxCiclo; ciclo++) {
   const divCiclo = document.createElement("div");
   divCiclo.className = "ciclo";
-  divCiclo.innerHTML = `<h2>Ciclo ${ciclo}</h2>`;
 
-  const bloque = document.createElement("div");
-  bloque.className = "contenedor-cursos";
-  bloque.style.display = "flex";
-  bloque.style.flexDirection = "column";
-  bloque.style.gap = "10px";
+  const titulo = document.createElement("h2");
+  titulo.textContent = `Ciclo ${ciclo}`;
+  divCiclo.appendChild(titulo);
+
+  const contenedorCursos = document.createElement("div");
+  contenedorCursos.className = "contenedor-cursos";
+  contenedorCursos.style.display = "flex";
+  contenedorCursos.style.flexWrap = "wrap";
+  contenedorCursos.style.gap = "10px";
+  contenedorCursos.style.backgroundColor = "#111";
+  contenedorCursos.style.padding = "10px";
+  contenedorCursos.style.borderRadius = "10px";
+  contenedorCursos.style.marginBottom = "20px";
 
   cursos.filter(c => c.ciclo === ciclo).forEach(curso => {
     const div = document.createElement("div");
     div.className = "curso";
     div.style.display = "flex";
     div.style.flexDirection = "column";
-    div.style.alignItems = "flex-start";
-    div.style.gap = "5px";
+    div.style.alignItems = "center";
+    div.style.justifyContent = "center";
+    div.style.padding = "10px";
+    div.style.backgroundColor = "#1f1f1f";
+    div.style.border = "1px solid #0f0";
+    div.style.borderRadius = "8px";
+    div.style.width = "200px";
+    div.style.cursor = "pointer";
 
-    const titulo = document.createElement("h3");
-    titulo.textContent = curso.nombre;
-    div.appendChild(titulo);
+    const tituloCurso = document.createElement("h3");
+    tituloCurso.textContent = curso.nombre;
+    tituloCurso.style.fontSize = "14px";
+    tituloCurso.style.textAlign = "center";
+    tituloCurso.style.color = "#bdfcc9";
+    div.appendChild(tituloCurso);
 
-    const boton = document.createElement("button");
-    boton.textContent = "Aprobar";
-    boton.disabled = curso.prerequisitos.length > 0;
-    boton.onclick = () => {
-      if (aprobados.has(curso.nombre)) {
-        aprobados.delete(curso.nombre);
-        div.classList.remove("aprobado");
-        boton.textContent = "Aprobar";
-      } else {
-        aprobados.add(curso.nombre);
-        div.classList.add("aprobado");
-        boton.textContent = "Deseleccionar";
+    div.onclick = () => {
+      if (!div.classList.contains("bloqueado")) {
+        if (aprobados.has(curso.nombre)) {
+          aprobados.delete(curso.nombre);
+          div.classList.remove("aprobado");
+        } else {
+          aprobados.add(curso.nombre);
+          div.classList.add("aprobado");
+        }
+        revisarDesbloqueos();
       }
-      revisarDesbloqueos();
     };
 
-    div.appendChild(boton);
-    bloque.appendChild(div);
-    cursoElements[curso.nombre] = { div, boton, curso };
+    contenedorCursos.appendChild(div);
+    cursoElements[curso.nombre] = { div, curso };
   });
 
-  divCiclo.appendChild(bloque);
+  divCiclo.appendChild(contenedorCursos);
   container.appendChild(divCiclo);
 }
 
 function revisarDesbloqueos() {
-  Object.values(cursoElements).forEach(({ curso, boton, div }) => {
+  Object.values(cursoElements).forEach(({ curso, div }) => {
+    const desbloqueado = curso.prerequisitos.every(p => aprobados.has(p));
+
     if (aprobados.has(curso.nombre)) {
-      boton.textContent = "Deseleccionar";
-      boton.disabled = false;
+      div.classList.add("aprobado");
+      div.classList.remove("bloqueado");
+    } else if (desbloqueado) {
+      div.classList.remove("bloqueado");
+      div.classList.add("desbloqueado");
     } else {
-      const desbloqueado = curso.prerequisitos.every(p => aprobados.has(p));
-      boton.disabled = !desbloqueado;
-      boton.textContent = "Aprobar";
+      div.classList.add("bloqueado");
+      div.classList.remove("desbloqueado");
       div.classList.remove("aprobado");
-      if (desbloqueado) {
-        div.classList.add("desbloqueado");
-      } else {
-        div.classList.remove("desbloqueado");
-      }
     }
   });
 }
